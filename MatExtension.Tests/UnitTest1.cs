@@ -3,6 +3,8 @@ using Xunit;
 namespace MatExtension.Tests;
 
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using OpenCvSharp;
 using PokemonXDImageLibrary;
 
@@ -55,5 +57,51 @@ public class MatExtension_Tests
         Assert.Equal(pHP_2, ret.P1.HP[1]);
         Assert.Equal(eHP_1, ret.COM.HP[0]);
         Assert.Equal(eHP_2, ret.COM.HP[1]);
+    }
+
+    [Fact(DisplayName = "キャプチャデバイスから画像を取得して解析できる")]
+    public void Get_mat_from_capture_device()
+    {
+        var mat = new Mat();
+        var cancellationTokenSource = new CancellationTokenSource();
+        var cancellationToken = cancellationTokenSource.Token;
+        var ready = false;
+        var task = Task.WhenAll
+        (
+            Task.Run(() =>
+            {
+                using (var videoCapture = new VideoCapture(1))
+                    while (!cancellationToken.IsCancellationRequested)
+                        lock (mat)
+                            if (videoCapture.Read(mat) && !ready) ready = true;
+            }, cancellationToken),
+            Task.Run(() =>
+            {
+                while (!ready) ;
+                using (var window = new Window())
+                    while (!cancellationToken.IsCancellationRequested)
+                    {
+                        window.ShowImage(mat);
+                        Cv2.WaitKey(1);
+                    }
+            }, cancellationToken)
+        );
+        while (!ready) ;
+
+        ((int Index, int[] HP) P1, (int Index, int[] HP) COM) ret;
+        try
+        {
+            lock (mat)
+            {
+                ret = mat.GetQuickBattleParties();
+            }
+        }
+        catch (System.Exception)
+        {
+            throw new System.Exception("たぶんその画面ではない");
+        }
+
+        cancellationTokenSource.Cancel();
+        task.Wait();
     }
 }
