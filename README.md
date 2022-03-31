@@ -22,8 +22,8 @@ classDiagram
         -GetNumbers(this Mat mat, Rect[] rects, int[] numberOfDigits, out Rect[] actual)$ int[]
         +GetStats(Mat mat)$ object
         +GetStats(Mat mat, Rect[] rects)$ object
-        +GetQuickBattleParties(Mat mat)$ object
-        +GetQuickBattleParties(Mat mat, Rect[] rects)$ object
+        +GetQuickBattleParties(Mat mat)$ QuickBattleParties
+        +GetQuickBattleParties(Mat mat, Rect[] rects)$ QuickBattleParties
     }
     class MatOptimizeExtension {
         -int ReferenceWidth$
@@ -38,9 +38,43 @@ classDiagram
     }
 ```
 
+### Structures
+
+
+```mermaid
+classDiagram
+    class QuickBattleParties {
+        +QuickBattleParty P1
+        +QuickBattleParty COM
+
+        +QuickBattleParties(int pIndex, int eIndex, UInt32 HP)
+        +QuickBattleParties(QuickBattleIndex_P1 pIndex, QuickBattleIndex_COM eIndex, UInt32 HP)
+        +QuickBattleParties(int pIndex, int eIndex, int pHP_1, int pHP_2, int eHP_1, int eHP_2)
+        +QuickBattleParties(QuickBattleIndex_P1 pIndex, QuickBattleIndex_COM eIndex, int pHP_1, int pHP_2, int eHP_1, int eHP_2)
+    }
+    class QuickBattleParty {
+        +int Index
+        +int[] HP
+
+        +QuickBattleParty(int index, int hp_1, int hp_2)
+    }
+    class QuickBattleIndex_P1 {
+        Mewtwo
+        Mew
+        Deoxys
+        Rayquaza
+        Jirachi
+    }
+    class QuickBattleIndex_COM {
+        Articuno
+        Zapdos
+        Moltres
+        Kangaskhan
+        Latias
+    }
+```
+
 > GetStats returns (int HP, int Attack, int Defense, int Speed, int SpAtk, int SpDef)
-> 
-> GetQuickBattleParties returns ((int Index, int[] HP) P1, (int Index, int[] HP) COM)
 
 ## Note
 
