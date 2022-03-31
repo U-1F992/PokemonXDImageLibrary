@@ -115,16 +115,21 @@ public class MatExtension_Tests
         // Equals(QuickBattleParties)
         Assert.True(parties.Equals(eq));
         Assert.False(parties.Equals(ne));
+        Assert.False(parties.Equals(null));
 
         // Equals(object)
         Assert.True(parties.Equals((object)eq));
         Assert.False(parties.Equals((object)ne));
+        Assert.False(parties.Equals((object?)null));
 
         // ==
         Assert.True(parties == eq);
         Assert.False(parties == ne);
+        Assert.False(parties == null);
+        
         // !=
         Assert.False(parties != eq);
         Assert.True(parties != ne);
+        Assert.True(parties != null);
     }
 }
