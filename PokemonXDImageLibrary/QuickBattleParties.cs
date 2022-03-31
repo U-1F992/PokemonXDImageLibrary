@@ -133,7 +133,7 @@ public enum QuickBattleIndex_P1
     /// </summary>
     Mewtwo,
     /// <summary>
-    /// デオキシス
+    /// ミュウ
     /// </summary>
     Mew,
     /// <summary>
