@@ -3,7 +3,7 @@ namespace PokemonXDImageLibrary;
 /// <summary>
 /// いますぐバトル生成結果を表す構造体
 /// </summary>
-public struct QuickBattleParties
+public struct QuickBattleParties : IEquatable<QuickBattleParties?>
 {
     /// <summary>
     /// プレイヤー側手持ちの基礎HP
@@ -120,7 +120,61 @@ public struct QuickBattleParties
             Index = index;
             HP = new int[] { hp_1, hp_2 };
         }
+
+        #region IEquatable implementation
+        #pragma warning disable CS1591
+        public bool Equals(QuickBattleParty? other)
+        {
+            if (other is null) return false;
+            return Index == other?.Index && HP[0] == other?.HP[0] && HP[1] == other?.HP[1] ;
+        }
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as QuickBattleParty?);
+        }
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Index, HP[0], HP[1]);
+        }
+        public static bool operator ==(QuickBattleParty? lhs, QuickBattleParty? rhs)
+        {
+            if (lhs is null) return rhs is null;
+            return lhs.Equals(rhs);
+        }
+        public static bool operator !=(QuickBattleParty? lhs, QuickBattleParty? rhs)
+        {
+            return !(lhs == rhs);
+        }
+        #pragma warning restore
+        #endregion
     }
+
+    #region IEquatable implementation
+    #pragma warning disable CS1591
+    public bool Equals(QuickBattleParties? other)
+    {
+        if (other is null) return false;
+        return P1 == other?.P1 && COM == other?.COM;
+    }
+    public override bool Equals(object? obj)
+    {
+        return Equals(obj as QuickBattleParties?);
+    }
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(P1, COM);
+    }
+    public static bool operator ==(QuickBattleParties? lhs, QuickBattleParties? rhs)
+    {
+        if (lhs is null) return rhs is null;
+        return lhs.Equals(rhs);
+    }
+    public static bool operator !=(QuickBattleParties? lhs, QuickBattleParties? rhs)
+    {
+        return !(lhs == rhs);
+    }
+    #pragma warning restore
+    #endregion
 }
 
 /// <summary>

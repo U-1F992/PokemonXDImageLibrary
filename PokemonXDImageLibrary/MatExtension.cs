@@ -35,6 +35,15 @@ public static class MatExtension
     {
         var source = mat.Optimize();
         var results = source.GetNumbers(rects, new int[] { 3, 3, 3, 3, 3, 3 }, out var actual);
+#if DEBUG
+        using (var window = new Window())
+        using (var tmp = source.Clone())
+        {
+            foreach (var rect in rects) tmp.Rectangle(rect, Scalar.Red, 2);
+            window.ShowImage(tmp.Resize(new Size(), 0.5, 0.5));
+            Cv2.WaitKey(-1);
+        }
+#endif
 
         (int HP, int Attack, int Defense, int Speed, int SpAtk, int SpDef) result;
         result.HP = results[0];
@@ -88,6 +97,15 @@ public static class MatExtension
     {
         var source = mat.Optimize();
         var results = source.GetNumbers(rects.Take(4).ToArray(), new int[] { 3, 3, 3, 3 }, out var actual);
+#if DEBUG
+        using (var window = new Window())
+        using (var tmp = source.Clone())
+        {
+            foreach (var rect in rects) tmp.Rectangle(rect, Scalar.Red, 2);
+            window.ShowImage(tmp.Resize(new Size(), 0.5, 0.5));
+            Cv2.WaitKey(-1);
+        }
+#endif
 
         QuickBattleParties result = new QuickBattleParties
         (
@@ -220,7 +238,7 @@ public static class MatExtension
     }
     /// <summary>
     /// 埋め込み済みリソースの数字画像を用いて、テンプレートマッチングで数字の判定を行う。<br/>
-    /// 最大類似度が0.8未満の場合は、未検出としてnullを返す。
+    /// 最大類似度が0.7未満の場合は、未検出としてnullを返す。
     /// </summary>
     /// <param name="mat"></param>
     /// <returns></returns>
@@ -229,7 +247,7 @@ public static class MatExtension
         var asm = Assembly.GetExecutingAssembly();
 
         // 下処理 (二値化+反転+拡大)
-        var digit = mat;
+        var digit = mat.Clone();
         Cv2.CvtColor(digit, digit, ColorConversionCodes.RGB2GRAY);
         Cv2.BitwiseNot(digit, digit);
         Cv2.Threshold(digit, digit, 127, 255, ThresholdTypes.Binary);
@@ -255,7 +273,7 @@ public static class MatExtension
         });
 
         var max = similarity.Max();
-        return (max / 5) < 0.8 ? null : Array.IndexOf(similarity, max);
+        return (max / 5) < 0.7 ? null : Array.IndexOf(similarity, max);
     }
     /// <summary>
     /// いますぐバトルの手持ちを表す。

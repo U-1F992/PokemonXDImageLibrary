@@ -74,34 +74,57 @@ public class MatExtension_Tests
                     while (!cancellationToken.IsCancellationRequested)
                         lock (mat)
                             if (videoCapture.Read(mat) && !ready) ready = true;
-            }, cancellationToken),
-            Task.Run(() =>
-            {
-                while (!ready) ;
-                using (var window = new Window())
-                    while (!cancellationToken.IsCancellationRequested)
-                    {
-                        window.ShowImage(mat);
-                        Cv2.WaitKey(1);
-                    }
             }, cancellationToken)
+            // Task.Run(() =>
+            // {
+            //     while (!ready) ;
+            //     using (var window = new Window())
+            //         while (!cancellationToken.IsCancellationRequested)
+            //         {
+            //             window.ShowImage(mat);
+            //             Cv2.WaitKey(1);
+            //         }
+            // }, cancellationToken)
         );
         while (!ready) ;
 
-        QuickBattleParties ret;
         try
         {
             lock (mat)
             {
-                ret = mat.GetQuickBattleParties();
+                //var ret = mat.GetQuickBattleParties();
+                var ret = mat.GetStats();
             }
         }
         catch (System.Exception)
         {
-            throw new System.Exception("たぶんその画面ではない");
+            throw;
         }
 
         cancellationTokenSource.Cancel();
         task.Wait();
+    }
+
+    [Fact]
+    public void Implement_IEquatable_QuickBattleParties()
+    {
+        var parties = new QuickBattleParties(1, 1, 100, 100, 100, 100);
+        var eq = new QuickBattleParties(1, 1, 100, 100, 100, 100);
+        var ne = new QuickBattleParties(2, 2, 200, 200, 200, 200);
+        
+        // Equals(QuickBattleParties)
+        Assert.True(parties.Equals(eq));
+        Assert.False(parties.Equals(ne));
+
+        // Equals(object)
+        Assert.True(parties.Equals((object)eq));
+        Assert.False(parties.Equals((object)ne));
+
+        // ==
+        Assert.True(parties == eq);
+        Assert.False(parties == ne);
+        // !=
+        Assert.False(parties != eq);
+        Assert.True(parties != ne);
     }
 }
