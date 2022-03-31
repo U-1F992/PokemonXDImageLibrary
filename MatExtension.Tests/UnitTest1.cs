@@ -92,8 +92,8 @@ public class MatExtension_Tests
         {
             lock (mat)
             {
-                //var ret = mat.GetQuickBattleParties();
-                var ret = mat.GetStats();
+                var ret = mat.GetQuickBattleParties();
+                //var ret = mat.GetStats();
             }
         }
         catch (System.Exception)
