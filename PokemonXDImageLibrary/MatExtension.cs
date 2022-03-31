@@ -66,7 +66,7 @@ public static class MatExtension
     /// </summary>
     /// <param name="mat"></param>
     /// <returns></returns>
-    public static ((int Index, int[] HP) P1, (int Index, int[] HP) COM) GetQuickBattleParties(this Mat mat)
+    public static QuickBattleParties GetQuickBattleParties(this Mat mat)
     {
         return mat.GetQuickBattleParties(new Rect[]
         {
@@ -84,16 +84,17 @@ public static class MatExtension
     /// <param name="mat"></param>
     /// <param name="rects"></param>
     /// <returns></returns>
-    public static ((int Index, int[] HP) P1, (int Index, int[] HP) COM) GetQuickBattleParties(this Mat mat, Rect[] rects)
+    public static QuickBattleParties GetQuickBattleParties(this Mat mat, Rect[] rects)
     {
         var source = mat.Optimize();
         var results = source.GetNumbers(rects.Take(4).ToArray(), new int[] { 3, 3, 3, 3 }, out var actual);
 
-        ((int Index, int[] HP) P1, (int Index, int[] HP) COM) result;
-        result.P1.HP = new int[] { results[0], results[1] };
-        result.COM.HP = new int[] { results[2], results[3] };
-        result.P1.Index = source.Clone(rects[4]).MatchIcon(QuickBattleSide.P1);
-        result.COM.Index = source.Clone(rects[5]).MatchIcon(QuickBattleSide.COM);
+        QuickBattleParties result = new QuickBattleParties
+        (
+            source.Clone(rects[4]).MatchIcon(QuickBattleSide.P1),
+            source.Clone(rects[5]).MatchIcon(QuickBattleSide.COM),
+            results[0], results[1], results[2], results[3]
+        );
 
 #if DEBUG
         for (var i = 0; i < rects.Length; i++)

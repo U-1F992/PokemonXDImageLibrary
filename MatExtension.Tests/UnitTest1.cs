@@ -88,7 +88,7 @@ public class MatExtension_Tests
         );
         while (!ready) ;
 
-        ((int Index, int[] HP) P1, (int Index, int[] HP) COM) ret;
+        QuickBattleParties ret;
         try
         {
             lock (mat)
