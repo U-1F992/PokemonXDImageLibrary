@@ -33,7 +33,20 @@ public static class MatOptimizeExtension
     /// <returns></returns>
     private static Mat Optimize(this Mat mat, double threshold)
     {
-        var result = mat.Trim(threshold);
+        var result = new Mat();
+        lock (mat) result = mat.Clone();
+        try
+        {
+            result = result.Trim(threshold);
+        }
+        catch
+        {
+            // 空の画像を触るとTrimが死ぬ
+            // ダミー画像を挿入する
+            result = new Mat(new Size(ReferenceWidth, ReferenceHeight), MatType.CV_8UC3);
+            Console.Error.WriteLine("[PokemonXDImageLibrary] [Warning] Trim failed. Dummy picture has been inserted.");
+        }
+
         result = result.Resize(new Size(ReferenceWidth, ReferenceHeight));
 
 #if DEBUG

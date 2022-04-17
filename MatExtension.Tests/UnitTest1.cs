@@ -74,17 +74,17 @@ public class MatExtension_Tests
                     while (!cancellationToken.IsCancellationRequested)
                         lock (mat)
                             if (videoCapture.Read(mat) && !ready) ready = true;
+            }, cancellationToken),
+            Task.Run(() =>
+            {
+                while (!ready) ;
+                using (var window = new Window())
+                    while (!cancellationToken.IsCancellationRequested)
+                    {
+                        window.ShowImage(mat);
+                        Cv2.WaitKey(1);
+                    }
             }, cancellationToken)
-            // Task.Run(() =>
-            // {
-            //     while (!ready) ;
-            //     using (var window = new Window())
-            //         while (!cancellationToken.IsCancellationRequested)
-            //         {
-            //             window.ShowImage(mat);
-            //             Cv2.WaitKey(1);
-            //         }
-            // }, cancellationToken)
         );
         while (!ready) ;
 
