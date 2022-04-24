@@ -82,7 +82,7 @@ public static class MatOptimizeExtension
         {
             var shave = 0;
             var column = 0;
-            var edge = result.At<Vec3b>(0, column);
+            var edge = result.Get<Vec3b>(0, column);
             var cts = new CancellationTokenSource();
             var ct = cts.Token;
             while (!ct.IsCancellationRequested)
@@ -91,10 +91,9 @@ public static class MatOptimizeExtension
                 {
                     Parallel.For(0, result.Height, new ParallelOptions() { CancellationToken = ct }, row =>
                     {
-                        if (GetDistance(result.At<Vec3b>(row, column + shave), edge) > threshold)
-                        {
+                        if (column + shave > result.Width - 1) throw new Exception();
+                        if (GetDistance(result.Get<Vec3b>(row, column + shave), edge) > threshold)
                             cts.Cancel();
-                        }
                     });
                 }
                 catch (OperationCanceledException) { }
@@ -108,7 +107,7 @@ public static class MatOptimizeExtension
         {
             var shave = 0;
             var column = result.Width - 1;
-            var edge = result.At<Vec3b>(0, column);
+            var edge = result.Get<Vec3b>(0, column);
             var cts = new CancellationTokenSource();
             var ct = cts.Token;
             while (!ct.IsCancellationRequested)
@@ -117,10 +116,9 @@ public static class MatOptimizeExtension
                 {
                     Parallel.For(0, result.Height, new ParallelOptions() { CancellationToken = ct }, row =>
                     {
-                        if (GetDistance(result.At<Vec3b>(row, column - shave), edge) > threshold)
-                        {
+                        if (column - shave < 0) throw new Exception();
+                        if (GetDistance(result.Get<Vec3b>(row, column - shave), edge) > threshold)
                             cts.Cancel();
-                        }
                     });
                 }
                 catch (OperationCanceledException) { }
@@ -130,8 +128,8 @@ public static class MatOptimizeExtension
         });
 
         (int L, int R) shave = (taskL.Result, taskR.Result);
-        result = result.Clone(new Rect(shave.L, 0, result.Width - shave.L, result.Height));
-        result = result.Clone(new Rect(0, 0, result.Width - shave.R, result.Height));
+        var rect = new Rect(shave.L, 0, result.Width - shave.L - shave.R, result.Height);
+        result = result.Clone(rect);
 
         trimmed = mat.Width != result.Width ? true : false;
         return result;
@@ -145,7 +143,7 @@ public static class MatOptimizeExtension
         {
             var shave = 0;
             var row = 0;
-            var edge = result.At<Vec3b>(row, 0);
+            var edge = result.Get<Vec3b>(row, 0);
             var cts = new CancellationTokenSource();
             var ct = cts.Token;
             while (!ct.IsCancellationRequested)
@@ -154,7 +152,9 @@ public static class MatOptimizeExtension
                 {
                     Parallel.For(0, result.Width, new ParallelOptions() { CancellationToken = ct }, column =>
                     {
-                        if (GetDistance(result.At<Vec3b>(row + shave, column), edge) > threshold) cts.Cancel();
+                        if (row + shave > result.Height - 1) throw new Exception();
+                        if (GetDistance(result.Get<Vec3b>(row + shave, column), edge) > threshold)
+                            cts.Cancel();
                     });
                 }
                 catch (OperationCanceledException) { }
@@ -168,7 +168,7 @@ public static class MatOptimizeExtension
         {
             var shave = 0;
             var row = result.Height - 1;
-            var edge = result.At<Vec3b>(row, 0);
+            var edge = result.Get<Vec3b>(row, 0);
             var cts = new CancellationTokenSource();
             var ct = cts.Token;
             while (!ct.IsCancellationRequested)
@@ -177,7 +177,9 @@ public static class MatOptimizeExtension
                 {
                     Parallel.For(0, result.Width, new ParallelOptions() { CancellationToken = ct }, column =>
                     {
-                        if (GetDistance(result.At<Vec3b>(row - shave, column), edge) > threshold) cts.Cancel();
+                        if (row - shave < 0) throw new Exception();
+                        if (GetDistance(result.Get<Vec3b>(row - shave, column), edge) > threshold)
+                            cts.Cancel();
                     });
                 }
                 catch (OperationCanceledException) { }
@@ -187,8 +189,8 @@ public static class MatOptimizeExtension
         });
 
         (int U, int D) shave = (taskU.Result, taskD.Result);
-        result = result.Clone(new Rect(0, shave.U, result.Width, result.Height - shave.U));
-        result = result.Clone(new Rect(0, 0, result.Width, result.Height - shave.D));
+        var rect = new Rect(0, shave.U, result.Width, result.Height - shave.U - shave.D);
+        result = result.Clone(rect);
 
         trimmed = mat.Height != result.Height ? true : false;
         return result;
