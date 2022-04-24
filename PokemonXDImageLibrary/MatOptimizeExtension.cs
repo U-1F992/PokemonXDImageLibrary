@@ -82,7 +82,7 @@ public static class MatOptimizeExtension
         {
             var shave = 0;
             var column = 0;
-            var edge = result.At<Vec3b>(0, column);
+            var edge = result.Get<Vec3b>(0, column);
             var cts = new CancellationTokenSource();
             var ct = cts.Token;
             while (!ct.IsCancellationRequested)
@@ -91,7 +91,7 @@ public static class MatOptimizeExtension
                 {
                     Parallel.For(0, result.Height, new ParallelOptions() { CancellationToken = ct }, row =>
                     {
-                        if (GetDistance(result.At<Vec3b>(row, column + shave), edge) > threshold)
+                        if (GetDistance(result.Get<Vec3b>(row, column + shave), edge) > threshold)
                         {
                             cts.Cancel();
                         }
@@ -108,7 +108,7 @@ public static class MatOptimizeExtension
         {
             var shave = 0;
             var column = result.Width - 1;
-            var edge = result.At<Vec3b>(0, column);
+            var edge = result.Get<Vec3b>(0, column);
             var cts = new CancellationTokenSource();
             var ct = cts.Token;
             while (!ct.IsCancellationRequested)
@@ -117,7 +117,7 @@ public static class MatOptimizeExtension
                 {
                     Parallel.For(0, result.Height, new ParallelOptions() { CancellationToken = ct }, row =>
                     {
-                        if (GetDistance(result.At<Vec3b>(row, column - shave), edge) > threshold)
+                        if (GetDistance(result.Get<Vec3b>(row, column - shave), edge) > threshold)
                         {
                             cts.Cancel();
                         }
@@ -145,7 +145,7 @@ public static class MatOptimizeExtension
         {
             var shave = 0;
             var row = 0;
-            var edge = result.At<Vec3b>(row, 0);
+            var edge = result.Get<Vec3b>(row, 0);
             var cts = new CancellationTokenSource();
             var ct = cts.Token;
             while (!ct.IsCancellationRequested)
@@ -154,7 +154,7 @@ public static class MatOptimizeExtension
                 {
                     Parallel.For(0, result.Width, new ParallelOptions() { CancellationToken = ct }, column =>
                     {
-                        if (GetDistance(result.At<Vec3b>(row + shave, column), edge) > threshold) cts.Cancel();
+                        if (GetDistance(result.Get<Vec3b>(row + shave, column), edge) > threshold) cts.Cancel();
                     });
                 }
                 catch (OperationCanceledException) { }
@@ -168,7 +168,7 @@ public static class MatOptimizeExtension
         {
             var shave = 0;
             var row = result.Height - 1;
-            var edge = result.At<Vec3b>(row, 0);
+            var edge = result.Get<Vec3b>(row, 0);
             var cts = new CancellationTokenSource();
             var ct = cts.Token;
             while (!ct.IsCancellationRequested)
@@ -177,7 +177,7 @@ public static class MatOptimizeExtension
                 {
                     Parallel.For(0, result.Width, new ParallelOptions() { CancellationToken = ct }, column =>
                     {
-                        if (GetDistance(result.At<Vec3b>(row - shave, column), edge) > threshold) cts.Cancel();
+                        if (GetDistance(result.Get<Vec3b>(row - shave, column), edge) > threshold) cts.Cancel();
                     });
                 }
                 catch (OperationCanceledException) { }
