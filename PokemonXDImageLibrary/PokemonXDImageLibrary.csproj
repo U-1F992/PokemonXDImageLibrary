@@ -7,7 +7,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <DebugType>embedded</DebugType>
 
-    <PackageVersion>0.2.2</PackageVersion>
+    <PackageVersion>0.2.3</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>

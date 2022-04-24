@@ -86,7 +86,7 @@ public class MatExtension_Tests
                     }
             }, cancellationToken)
         );
-        while (!ready) ;
+        while (!ready) Thread.Sleep(1);
 
         try
         {
